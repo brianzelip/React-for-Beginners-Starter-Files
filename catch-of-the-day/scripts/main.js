@@ -1,11 +1,16 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+// routing tools
 var ReactRouter = require('react-router');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
-var Navigation = ReactRouter.Navigation;
+var Navigation = ReactRouter.Navigation; //mixin
+var History = ReactRouter.History; //mixin
 var createBrowserHistory = require('history/lib/createBrowserHistory');
+
+// helpers for auto-generating dummy text in the form input
+var h = require('./helpers');
 
 /*
   App
@@ -83,17 +88,29 @@ var Inventory = React.createClass({
   <StorePicker/> component
 */
 var StorePicker = React.createClass({
+  mixins : [History],
+  goToStore : function(event) {
+    event.preventDefault();
+    // check to confirm that our events are listening
+    // console.log('it works!!');
 
+    // get data from the input field then check it
+    var storeId = this.refs.storeId.value;
+    console.log(storeId);
+    // then transition from <StorePicker/> to <App/>
+    this.history.pushState(null, '/store/' + storeId);
+
+  },
   render : function() {
-    var name = 'http://zelip.me';
+    var prompt = 'Please enter a store';
     return (
-      <form className="store-selector">
+      <form className="store-selector" onSubmit={this.goToStore}>
         {/* This is a comment in jsx,
             it only works when _inside_ the single
             element of jsx that gets rendered.
         */}
-        <h2>Please enter a store <a href="http://zelip.me">{name}</a></h2>
-        <input type="text" ref="storeId" />
+        <h2>{prompt}</h2>
+        <input type="text" ref="storeId" defaultValue={h.getFunName()} required />
         <input type="Submit" />
       </form>
     )
